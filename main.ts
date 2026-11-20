@@ -1,12 +1,12 @@
 // World news in one image, Thursday 19 November 2026.
-// Front page: Trump, Xi and Putin meet in Shenzhen, Crimea
-// bridge attacked again, Israel launches Gaza ground operation,
-// Anthropic's record $81.3bn IPO, Van Gogh sells for $190.4m,
-// and Estonia to close its Russia border.
-// This program ships the finished front page beside it and writes
-// exactly those bytes to the grader's output folder, every run.
-// It uses only the Node standard library, reads no network, and
-// writes nothing else, so two runs produce identical output.
+// Rebuilt front page: Xi hosts Trump and Putin in Shenzhen,
+// the ICJ finds Myanmar committed genocide, Ukraine hits the
+// Kerch Bridge again, Israel ends its Gaza ground raid,
+// Anthropic's Nasdaq debut, and the Senate rejects the Iran
+// war-powers resolution 48-51.
+// The finished image ships beside this file. This program copies
+// those exact bytes into the grader's output folder, nothing else.
+// Node standard library only, no network, deterministic output.
 
 import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { dirname, join } from "node:path";
@@ -19,8 +19,14 @@ const target = join(outputDir, "entry.png");
 
 mkdirSync(outputDir, { recursive: true });
 const bytes = readFileSync(source);
-// The competition gate allows at most 1 MiB; fail loudly here
-// rather than submitting a file the gate would refuse.
+// Refuse to ship anything that is not actually a PNG, so a bad
+// build fails here instead of reaching the grader.
+const pngMagic = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
+if (!bytes.subarray(0, 8).equals(pngMagic)) {
+  throw new Error("entry.png does not start with the PNG signature");
+}
+// The gate allows at most 1 MiB, so fail loudly here instead of
+// handing the grader a file it would refuse.
 if (bytes.length > 1048576) {
   throw new Error(`entry.png is ${bytes.length} bytes, over the 1 MiB limit`);
 }
